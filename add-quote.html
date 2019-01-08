@@ -1,0 +1,68 @@
+<html>
+    <head>
+        <title>
+            Add Quote Page
+        </title>
+        
+        <style>
+
+        .pageTextStyle {
+            text-align: center;
+            margin: 2% 0%;
+        }
+
+        textarea {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 1.2%;
+        }
+
+        </style>
+    </head>
+
+
+    <body>
+
+        <h1 class = "pageTextStyle" style="margin-top:5%"><font size = "20"> Quotify </font></h1>
+
+        <div class = "pageTextStyle">
+            <p><a href="index.html"> Randon Quote (API) </a> | <a href="local-random.html"> Random Quote (local) </a> | <a> Add Quote </a> | <a href="list-all-quotes.html"> List All Quotes (local) </a></p>
+        </div>
+        
+        <textarea id = "quoteArea" rows="6" cols="70" placeholder="New Quote"></textarea>
+        <textarea id = "authorArea" rows ="1" cols = "70" placeholder="Author"></textarea>
+
+        <form class="pageTextStyle">
+            <input id = "add" type="submit" value="Add Quote">
+        </form>
+
+        <script>
+
+            const quoteAreaHandle = document.getElementById('quoteArea')
+            const authorAreaHandle = document.getElementById('authorArea')
+            const addHandle = document.getElementById('add')
+
+            let localStorageArray = []
+            let quoteText = {}
+
+            if(localStorage.getItem('temp')){
+                localStorageArray = JSON.parse(localStorage.getItem('temp'))
+            }
+
+            addHandle.addEventListener('click', function(event){
+                event.preventDefault()
+                
+                quoteText.quote = quoteAreaHandle.value
+                quoteText.author = authorAreaHandle.value
+
+                localStorageArray.push(quoteText)
+                localStorage.setItem('temp',JSON.stringify(localStorageArray))
+
+                quoteAreaHandle.value = ''
+                authorAreaHandle.value = ''
+            })
+
+        </script>
+    </body>
+</html>

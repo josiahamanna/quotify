@@ -1,0 +1,135 @@
+<html>
+    <head>
+        <title>
+            index page
+        </title>
+        
+        <style>
+
+            .pageTextStyle {
+                text-align: center;
+                margin: 2% 0%;
+            }
+
+            .quoteStyle {
+                background-color: #e8e4e4;
+                margin: 0% 15% 0% 15%;
+            }
+
+            a {
+                margin: 1%
+            }
+
+            #authorDisp {
+                margin: 0% 0% 0% 40%;
+                font-style: italic;
+                font-size: 20px
+            }
+
+            #quoteDisp {
+                font-family: monospace;
+                font-style: italic
+            }
+
+        </style>
+    </head>
+
+
+    <body>
+
+        <h1 class = "pageTextStyle" style="margin-top:5%"><font size = "20"> Quotify </font></h1>
+
+        <div class = "pageTextStyle">
+            <p><a> Randon Quote (API) </a> | <a href="local-random.html"> Random Quote (local) </a> | <a href = "add-quote.html"> Add Quote </a> | <a href="list-all-quotes.html"> List All Quotes (local) </a></p>
+        </div>
+
+        <div class = "pageTextStyle quoteStyle">
+            <h2 id = "quoteDisp"></h2><br/>
+            <span id = "authorDisp" ></span>
+        </div>
+
+        <form class = "pageTextStyle">
+            <input type="button" value="Get Another Quote" id = "getQuote" style="margin: 2% 0% 0% 0%; padding: 10px 30px;"/>            
+        </form>
+        
+        <div id="changeBtn">
+            <button id = "saveLocal" style="margin: -8% 0% 0% 78.6%" onclick="saveClick()"> Save Quote </button>
+        </div>
+
+        <script>
+            const getQuoteHandle = document.getElementById('getQuote')
+            const quoteDispHandle = document.getElementById('quoteDisp')
+            const authorDispHandle = document.getElementById('authorDisp')
+            const changeBtnHandle = document.getElementById('changeBtn')
+            
+            const quoteURL = 'https://quotes.stormconsultancy.co.uk/random.json'
+            let quoteText = {}
+            let localStorageArray = []
+            let notFound = true
+            
+            if(localStorage.getItem('temp')){
+                localStorageArray = JSON.parse(localStorage.getItem('temp'))
+            }
+
+            quoteGenerateAPI()
+
+            getQuoteHandle.addEventListener('click', function(){
+                quoteGenerateAPI()
+            })
+
+            function quoteGenerateAPI(){
+                const xhr = new XMLHttpRequest()
+                xhr.open('GET', quoteURL)
+                xhr.send()
+                xhr.onload = function(){
+                    quoteText = JSON.parse(xhr.responseText)
+                    quoteDispHandle.innerText = `"${quoteText.quote}"`
+                    authorDispHandle.innerText = ` ~ ${quoteText.author}`
+                    authorDispHandle.style.margin = '0% 0% 0% 0%'
+                    
+                    if(localStorageArray.length > 0){
+                        localStorageArray.forEach(function(item){
+                            if(item.quote == quoteText.quote){
+                                notFound = false
+                            }
+                        })
+
+                        if(notFound){
+                            changeBtnHandle.innerHTML = ''
+                            let saveBtn = document.createElement('button')
+                            saveBtn.id = 'saveLocal'
+                            saveBtn.style = 'margin: -8% 0% 0% 78.6%'
+                            saveBtn.textContent = 'Save Quote'
+                            saveBtn.onclick = saveClick
+                            changeBtnHandle.appendChild(saveBtn)
+                            notFound = true
+                        }
+                    }
+                }
+            }
+
+            // function saveClick() {
+            //     if(localStorageArray.length < 1){
+            //         pushNewQuote()                    
+            //     } else {
+            //         if(localStorageArray[localStorageArray.length - 1].quote != quoteText.quote){
+            //             pushNewQuote()
+            //         }   
+            //     }
+            // }
+            
+            function saveClick() {
+                quoteText.isSaved = true
+                localStorageArray.push(quoteText)
+                localStorage.setItem('temp',JSON.stringify(localStorageArray))
+                
+                changeBtnHandle.innerHTML = ''
+                let savedBtn = document.createElement('button')
+                savedBtn.style = 'margin: -8% 0% 0% 81%'
+                savedBtn.textContent = 'Saved'
+                changeBtnHandle.appendChild(savedBtn)
+            }
+
+        </script>
+    </body>
+</html>

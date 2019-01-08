@@ -1,0 +1,165 @@
+<html>
+    <head>
+        <title>
+            Add Quote Page
+        </title>
+        
+        <style>
+
+        .pageTextStyle {
+            text-align: center;
+            margin: 2% 0%;
+        }
+
+        textarea {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 1.2%;
+        }
+
+        .quoteStyle {
+            background-color: #e8e4e4;
+            margin: 0% 15% 0% 15%;
+        }
+
+        /* #list {
+            margin: 0% 30% 0%;
+        } */
+
+        </style>
+    </head>
+
+
+    <body>
+
+        <h1 class = "pageTextStyle" style="margin-top:5%"><font size = "20"> Quotify </font></h1>
+
+        <div class = "pageTextStyle">
+            <p><a href="index.html"> Randon Quote (API) </a> | <a href="local-random.html"> Random Quote (local) </a> | <a href = "add-quote.html" > Add Quote </a> | <a> List All Quotes (local) </a></p>
+        </div>
+        
+        <div id="list">
+ 
+        </div>
+
+        <script>
+
+            const quoteDispHandle = document.getElementById('quoteDisp')
+            const authorDispHandle = document.getElementById('authorDisp')
+            const listHandle = document.getElementById('list')
+            
+
+            let localStorageArray = []
+
+            if(localStorage.getItem('temp')){
+                localStorageArray = JSON.parse(localStorage.getItem('temp'))
+            }
+
+            if(!localStorageArray.length){
+                listHandle.innerHTML = '<h2 style = "text-align: center"> List Empty <h2>'
+            } else {
+
+                localStorageArray.forEach(function(list){
+                    const divTag = document.createElement('div')
+                    divTag.classList.add('pageTextStyle', 'quoteStyle')
+
+                    const h2Tag = document.createElement('h2')
+                    h2Tag.textContent = `"${list.quote}"`
+                    divTag.appendChild(h2Tag)
+
+                    const spanTag = document.createElement('span')
+                    spanTag.textContent = `~${list.author}`
+                    divTag.appendChild(spanTag)
+
+                    const hrLine = document.createElement('p')
+                    hrLine.style.border = '1px solid black'
+                    hrLine.style.margin = '1% 15%'
+
+                    const deletBtn = document.createElement('button')
+                    deletBtn.innerText = 'delete'
+                    deletBtn.style.margin= '0% 0% 0% 81%'
+                    deletBtn.addEventListener('click', function(){
+                        editBtn.remove()
+                        divTag.remove()
+                        deletBtn.remove()
+                        hrLine.remove()
+                        localStorageArray = localStorageArray.filter(function(toRemove){
+                            return toRemove.quote != list.quote
+                        })
+                        if(localStorageArray.length == 0){
+                            listHandle.innerHTML = '<h2 style = "text-align: center"> List Empty <h2>'
+                        }
+                        localStorage.setItem('temp',JSON.stringify(localStorageArray))
+                    })
+
+                    const editBtn = document.createElement('button')
+                    editBtn.innerText = 'edit'
+                    editBtn.style.margin= '0% 0% 0% 81%'
+                    editBtn.addEventListener('click', function(){
+                        h2Tag.innerHTML = ''
+                        spanTag.innerHTML = ''
+
+                        const quoteArea = document.createElement('textarea')
+                        quoteArea.rows = 3
+                        quoteArea.cols = 80
+                        quoteArea.value = list.quote
+                        divTag.appendChild(quoteArea)
+
+                        const authorArea = document.createElement('textarea')
+                        authorArea.value = list.author
+                        authorArea.rows = 1
+                        divTag.appendChild(authorArea)
+
+
+                        const cancelBtn = document.createElement('button')
+                        cancelBtn.innerText = 'cancel'
+                        cancelBtn.style.margin= '0% 0% 0% -84.5%'
+                        cancelBtn.addEventListener('click', function(){
+                            quoteArea.remove()
+                            authorArea.remove()
+                            updateBtn.remove()
+                            cancelBtn.remove()
+                            h2Tag.textContent = `"${list.quote}"`
+                            divTag.appendChild(h2Tag)
+                            spanTag.textContent = `~${list.author}`
+                            divTag.appendChild(spanTag)
+                        })
+                        divTag.appendChild(cancelBtn)
+
+                        const updateBtn = document.createElement('button')
+                        updateBtn.innerText = 'update'
+                        updateBtn.style.margin= '0% 0% 0% -15%'
+                        updateBtn.addEventListener('click',function(){                        
+                            updateBtn.remove()
+                            cancelBtn.remove()
+                            h2Tag.textContent = `"${quoteArea.value}"`
+                            list.quote = quoteArea.value
+                            quoteArea.remove()
+                            divTag.appendChild(h2Tag)
+                            spanTag.textContent = `~${authorArea.value}`
+                            list.author = authorArea.value
+                            authorArea.remove()
+                            divTag.appendChild(spanTag)
+                            console.log(list)
+                            console.log(localStorageArray)
+                            localStorage.setItem('temp',JSON.stringify(localStorageArray))
+                        })
+
+                        divTag.appendChild(updateBtn)
+                    })
+
+                    listHandle.appendChild(divTag)
+                    listHandle.appendChild(editBtn)
+                    listHandle.appendChild(deletBtn)
+                    listHandle.appendChild(hrLine)
+
+                })
+            }
+
+                       
+        </script>
+
+    </body>
+
+</html>

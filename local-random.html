@@ -1,0 +1,97 @@
+<html>
+    <head>
+        <title>
+            index page
+        </title>
+        
+        <style>
+            
+            .pageTextStyle {
+                text-align: center;
+                margin: 2% 0%;
+            }
+
+            .quoteStyle {
+                background-color: #e8e4e4;
+                margin: 0% 15% 0% 15%;
+            }
+
+            a {
+                margin: 1%
+            }
+
+            #authorDisp {
+                margin: 0% 0% 0% 40%;
+                font-style: italic;
+                font-size: 20px
+            }
+
+            #quoteDisp {
+                font-family: monospace;
+                font-style: italic
+            }
+
+        </style>
+    </head>
+
+
+    <body>
+
+        <h1 class = "pageTextStyle" style="margin-top:5%"><font size = "20"> Quotify </font></h1>
+
+        <div class = "pageTextStyle">
+            <p><a href="index.html"> Randon Quote (API) </a> | <a> Random Quote (local) </a> | <a href = "add-quote.html"> Add Quote </a> | <a href = "list-all-quotes.html"> List All Quotes (local) </a></p>
+        </div>
+
+        <div class = "pageTextStyle quoteStyle">
+            <h2 id = "quoteDisp"></h2><br/>
+            <span id = "authorDisp" > </span>
+        </div>
+
+        <form class = "pageTextStyle">
+            <input type="button" value="Get Another Quote" id = "getQuote"/>
+        </form>
+        
+        <script>
+            const getQuoteHandle = document.getElementById('getQuote')
+            const quoteDispHandle = document.getElementById('quoteDisp')
+            const authorDispHandle = document.getElementById('authorDisp')
+
+            let localStorageArray = []
+            let quoteText = {}
+            let randomIndex
+
+            if(localStorage.getItem('temp')){
+                localStorageArray = JSON.parse(localStorage.getItem('temp'))
+            }
+
+            quoteGenerateLocal()
+
+            getQuoteHandle.addEventListener('click', function(){
+                quoteGenerateLocal()
+            })
+            
+            function quoteGenerateLocal() {
+                if(localStorageArray.length < 1) {
+                    quoteDispHandle.innerText = 'Local Storage Empty'
+                } else {
+                    quoteText = localStorageArray[getRandomIndex(localStorageArray)]
+                    quoteDispHandle.innerText = `"${quoteText.quote}"`
+                    authorDispHandle.innerText = ` ~ ${quoteText.author}`
+                    authorDispHandle.style.margin = '0% 0% 0% 0%'
+                }
+            }
+
+            function getRandomIndex(array) {
+                let tempIndex = Math.floor(Math.random()*100)%array.length
+                if(tempIndex == randomIndex){
+                    getRandomIndex(array)
+                } else {
+                    randomIndex = tempIndex
+                }
+                return randomIndex
+            }
+            
+        </script>
+    </body>
+</html>
